@@ -3,14 +3,14 @@ async function pegarNome() {
 }
 
 const resultado = pegarNome();
-console.log(resultado);
+// console.log(resultado);
 
 async function principal(){
     const resultado = await pegarNome();
     console.log(resultado);
 }
 
-principal()
+// principal()
 
 // =========================================================================
 // DESAFIO DE NEGÓCIOS: CONSUMO DA API PTAX COM ASYNC/AWAIT
@@ -39,19 +39,31 @@ async function obterDadosCambio(){
     try {
         const response = await fetch(API_URL);
         const dados = await response.json();
-        console.log(dados.value);
+        return dados.value;
 
     } catch (error){
         console.error("Erro ao buscar dados da API:", error)
     }
 }
-obterDadosCambio()
+// obterDadosCambio()
 
 // ### 2. Relatório de Spread Comercial (Mapeamento de Dados)
 // Crie uma função assíncrona que chame a função do Exercício 1.
 // Com o array de dados na mão, use um método de iteração (como .map ou .forEach) para calcular o spread de cada dia (cotacaoVenda - cotacaoCompra).
 // Exiba no console uma lista formatada contendo a data (apenas os primeiros 10 caracteres) e o spread formatado com 4 casas decimais.
 
+async function getCommercialSpread () {
+    const currencies = await obterDadosCambio();
+
+    currencies.forEach((item) => {
+        const date = item.dataHoraCotacao.slice(0, 10);
+        const spread = item.cotacaoVenda - item.cotacaoCompra;
+
+        console.log(`Date: ${date} | Spread: ${spread.toFixed(4)}`)
+    })
+}
+
+getCommercialSpread()
 
 // ### 3. Auditoria Cambial (Busca de Registro Específico)
 // Crie uma função assíncrona chamada 'auditarData(dataAlvo)'.
