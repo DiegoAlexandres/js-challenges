@@ -63,12 +63,29 @@ async function getCommercialSpread () {
     })
 }
 
-getCommercialSpread()
+// getCommercialSpread()
 
 // ### 3. Auditoria Cambial (Busca de Registro Específico)
 // Crie uma função assíncrona chamada 'auditarData(dataAlvo)'.
 // Ela deve buscar os dados da API e procurar se existe algum registro onde a 'dataHoraCotacao' comece com a data passada no parâmetro (ex: "2020-01-03").
 // Se encontrar, exiba os valores de compra e venda. Se não encontrar (como em um final de semana), exiba: "Sem pregão oficial nesta data."
+
+async function auditDate(targetDate){
+    const currencies = await obterDadosCambio();
+
+    const record = currencies.find((item) => 
+        item.dataHoraCotacao.startsWith(targetDate)
+    )
+
+    if (record) {
+        console.log(`Compra: R$ ${record.cotacaoCompra}`);
+        console.log(`Venda:  R$ ${record.cotacaoVenda}`);
+    } else {
+        console.log("Sem pregão oficial nesta data.");
+    }
+}
+
+auditDate("2020-01-03")
 
 
 // ### 4. Alerta de Volatilidade (Filtro de Risco)
