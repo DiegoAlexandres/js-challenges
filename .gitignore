@@ -1,1 +1,7 @@
 ingles.js
+node_modules/
+.pnpm-store/
+.yarn/cache/
+dist/
+build/
+out/
