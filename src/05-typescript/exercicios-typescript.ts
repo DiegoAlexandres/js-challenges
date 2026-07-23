@@ -91,25 +91,25 @@ type OpcoesDeStatus = "pendente" | "pago" | "cancelado";
 const _statusPedido: OpcoesDeStatus = "pago";
 
 // interface foi feita especificamente para desenhar a estrutura de objetos e classes.
-interface Product {
+interface ProductTest {
   id: string;
   name: string;
   price: number;
 }
 
-const _myProduct: Product = {
+const _myProduct: ProductTest = {
   id: "P-001",
   name: "Teclado Mecanico",
   price: 450.0,
 };
 
 // Criando interface com herença
-interface Veiculo {
+interface VeiculoTeste {
   wheels: number;
   color: string;
 }
 
-interface Carro extends Veiculo {
+interface Carro extends VeiculoTeste {
   mark: string;
   hasAirConditioning: boolean;
 }
@@ -163,3 +163,160 @@ const _listaCertaArray: UsuarioArray[] = ["Maria", 22, "maria@email.com", true];
 
 type UsuarioTupla = [string, number, string, boolean];
 const _listaCertaTupla: UsuarioTupla = ["Maria", 22, "maria@email.com", true];
+
+// ================================================
+// EXERCÍCIO 1: O Carrinho de Compras do E-commerce
+// ================================================
+/*
+O Problema de Negócio:
+Você precisa modelar a estrutura de dados para o carrinho de compras de uma loja virtual. O sistema precisa saber exatamente o que tem dentro do carrinho para calcular o frete e o total.
+
+Requisitos da modelagem:
+- Crie um molde para representar um Produto (deve ter um código único, nome, preço e categoria).
+- Crie um molde para representar um Item do Carrinho (que é basicamente um Produto atrelado a uma quantidade).
+- Crie o molde principal do Carrinho, que deve conter o ID do cliente, uma lista de Itens do Carrinho e o status atual do pedido (que só pode ser: "aberto", "fechado" ou "abandonado").
+*/
+
+type Status = "open" | "closed" | "abandoned";
+
+interface Product {
+  productId: number;
+  name: string;
+  price: number;
+  category: string;
+}
+
+interface CartItem {
+  product: Product;
+  quantity: number;
+}
+
+interface _Cart {
+  customerId: number;
+  cartItems: CartItem[];
+  status: Status;
+}
+
+// ==============================================
+// EXERCÍCIO 2: O Portal de Recursos Humanos (RH)
+// ==============================================
+/*
+O Problema de Negócio:
+A equipe de RH usa um sistema para gerenciar funcionários. Eles precisam de diferentes "visões" dos dados do funcionário dependendo da tela do sistema, para não vazar dados sensíveis como salário.
+
+Requisitos da modelagem:
+- Crie um molde base e completo do Funcionário (ID, nome, cargo, salário, data de contratação e se é gerente ou não).
+- A tela de "Perfil Público" precisa de um molde que tenha APENAS o nome e o cargo do funcionário. (Dica: use Utility Types para reaproveitar o molde base).
+- A tela de "Cadastro de Novo Funcionário" precisa de um molde que tenha todas as informações do funcionário, EXCETO o ID e a data de contratação (pois o sistema vai gerar isso automaticamente depois). (Dica: use Utility Types para reaproveitar o molde base).
+*/
+
+interface Funcionario {
+  funcionarioId: number;
+  nome: string;
+  cargo: string;
+  salario: number;
+  dataContratacao: Date;
+  eGerente: boolean;
+}
+
+type _PerfilPublico = Pick<Funcionario, "nome" | "cargo">;
+
+type _CadastroNovoFuncionario = Omit<
+  Funcionario,
+  "funcionarioId" | "dataContratacao"
+>;
+
+// ==========================================
+// EXERCÍCIO 3: O Gateway de Pagamentos
+// ==========================================
+/*
+O Problema de Negócio:
+Você está construindo o módulo que recebe os pagamentos dos clientes. O cliente pode escolher pagar de três formas diferentes, e o sistema precisa garantir que os dados corretos sejam exigidos para cada forma.
+
+Requisitos da modelagem:
+- Crie moldes separados para três métodos de pagamento: Cartão de Crédito (precisa do número, validade e CVV), Pix (precisa apenas da chave Pix) e Boleto (precisa apenas da data de vencimento).
+- Crie um tipo chamado Transacao, que represente um pagamento. Essa transação deve conter o valor da compra, e o método de pagamento (que pode ser QUALQUER UM dos três criados acima - Union Type).
+*/
+
+interface CartaoCredito {
+  numeroCartao: string;
+  validade: string;
+  cvv: string;
+}
+
+interface Pix {
+  chavePix: string;
+}
+
+interface Boleto {
+  dataVencimento: string;
+}
+
+type MetodoPagamento = CartaoCredito | Pix | Boleto;
+
+interface _Transacao {
+  valorCompra: number;
+  metodoPagamento: MetodoPagamento;
+}
+
+// ==========================================
+// EXERCÍCIO 4: Frota de Logística
+// ==========================================
+/*
+O Problema de Negócio:
+Uma transportadora precisa cadastrar os veículos da sua frota no sistema. Todos os veículos têm dados em comum, mas caminhões e motos têm regras específicas.
+
+Requisitos da modelagem:
+- Crie um contrato (interface) base para Veiculo com placa, ano de fabricação e cor.
+- Crie um contrato específico para Caminhao que herde (extends) os dados do Veiculo base, mas adicione a capacidade máxima de carga em toneladas e a quantidade de eixos.
+- Crie um contrato específico para Moto que herde os dados do Veiculo base, mas adicione se ela tem baú para entregas ou não (booleano).
+*/
+
+interface Veiculo {
+  placa: string;
+  anoFabricacao: number;
+  cor: string;
+}
+
+interface _Caminhao extends Veiculo {
+  capacidadeMaxima: number;
+  quantidadeEixos: number;
+}
+
+interface _Moto extends Veiculo {
+  temBau: boolean;
+}
+
+// ==========================================
+// EXERCÍCIO 5: O Padrão de Resposta da API
+// ==========================================
+/*
+O Problema de Negócio:
+O time de frontend reclamou que a sua API devolve os dados de forma bagunçada. Às vezes devolve só o dado, às vezes devolve uma mensagem de erro, e eles nunca sabem o que esperar. Você precisa padronizar como a API responde.
+
+Requisitos da modelagem:
+- Crie um molde de Resposta de Sucesso, que deve obrigatoriamente conter um código numérico de status (ex: 200) e uma propriedade de dados (pode ser uma string ou um array de qualquer coisa).
+- Crie um molde de Resposta de Erro, que deve conter o código numérico de status e uma Tupla contendo o código do erro interno (texto) e a mensagem para o usuário final (texto).
+- Simule a assinatura de uma função assíncrona chamada buscarCliente que promete devolver uma resposta da API. O retorno deve forçar o uso desse seu novo padrão (ou seja, retornar OU a resposta de sucesso OU a resposta de erro).
+*/
+
+interface RespostaSucesso {
+  status: number;
+  dados: string | unknown[];
+}
+
+type CodigoErro = [string, string];
+
+interface RespostaErro {
+  status: number;
+  erro: CodigoErro;
+}
+
+type RespostaApi = RespostaSucesso | RespostaErro;
+
+async function _buscarCliente(): Promise<RespostaApi> {
+  return {
+    status: 200,
+    dados: ["Cliente João", "Cliente Maria"],
+  };
+}
