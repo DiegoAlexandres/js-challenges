@@ -1,14 +1,14 @@
 const file = process.argv[2];
 
-if (!file){
-    process.exit(1);
+if (!file) {
+  process.exit(1);
 }
 
-const nameClean = file.replace("src/", "").replace(".js", "");
+const nameClean = file.replace("src/", "").replace(".ts", "");
 
 try {
-    await import(`./src/${nameClean}.js`);
+  await import(`./src/${nameClean}.ts`);
 } catch (error) {
-    console.error(error)
-    process.exit(1)
-}   
+  console.error(error);
+  process.exit(1);
+}
